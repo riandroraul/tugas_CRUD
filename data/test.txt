@@ -1,0 +1,1 @@
+Menulis file secara asynchronous
