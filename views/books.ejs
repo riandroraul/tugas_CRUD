@@ -1,7 +1,7 @@
     <h4>Daftar Buku</h4>
 
     <a href="/tambah" class="btn btn-primary"> Tambah Data Buku</a>
-    
+
     <table class="table">
       <thead>
         <tr>
@@ -20,8 +20,8 @@
         <td><%= book.penerbit %></td>
         <td><%= book.pengarang %></td>
         <td>
-          <a href="/ubah"><span class="badge text-bg-success">ubah</span></a>
-          <a href="/hapus"><span class="badge text-bg-danger">hapus</span></a>
+          <a href="/ubah/ <%= book.namaBuku %> "><span class="badge text-bg-success">ubah</span></a>
+          <a href="/hapus/ <%= book.namaBuku %>"><span class="badge text-bg-danger" onclick="return confirm('buku ini akan dihapus ?');">hapus</span></a>
         </td>
       </tr>
     </tbody>
