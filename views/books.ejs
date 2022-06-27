@@ -1,0 +1,30 @@
+    <h4>Daftar Buku</h4>
+
+    <a href="/tambah" class="btn btn-primary"> Tambah Data Buku</a>
+    
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Nama Buku</th>
+          <th scope="col">Penerbit</th>
+          <th scope="col">Pengarang</th>
+          <th scope="col">Aksi</th>
+        </tr>
+      </thead>
+    <% books.forEach((book, index) => { %>
+      <tbody>
+      <tr>
+        <th scope="row"><%= index +1  %></th>
+        <td><%= book.namaBuku %> </td>
+        <td><%= book.penerbit %></td>
+        <td><%= book.pengarang %></td>
+        <td>
+          <a href="/ubah"><span class="badge text-bg-success">ubah</span></a>
+          <a href="/hapus"><span class="badge text-bg-danger">hapus</span></a>
+        </td>
+      </tr>
+    </tbody>
+    <% }) %>
+  </table>
+    <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ex in cum dolor quibusdam maiores. Non eum aliquid ut maiores quibusdam?</p>

@@ -27,13 +27,22 @@ client.connect( (error, client) => {
   // );
 
   // menambahkan data lebih dari satu
-  // db.collection('collection1').insertMany(
+  // db.collection('books').insertMany(
   //   [
   //     {
-  //       buku: 'Doraemon'
+  //         namaBuku: 'Belajar MongoDB',
+  //         penerbit: 'Dicoding',
+  //         pengarang: 'Doddy Satria'
   //     },
   //     {
-  //       buku: 'Doraemon'
+  //         namaBuku: 'Belajar NodeJS',
+  //         penerbit: 'Pijar Camp',
+  //         pengarang: 'Bagus Pratama'
+  //     },
+  //     {
+  //         namaBuku: 'Belajar Github',
+  //         penerbit: 'Babastudio',
+  //         pengarang: 'Dennis Eka Putra'
   //     }
   //   ],
     // (error, result) => {
@@ -94,23 +103,22 @@ client.connect( (error, client) => {
     // ).then((result) => console.log(result))
     // .catch((error) => console.log(error))
 
-    // menghapus satu data mahasiswa pada collection1
+    // menghapus satu data buku pada collection1
 
-    // db.collection('collection1').deleteOne(
+    // db.collection('books').deleteOne(
     //   {
-        // _id: ObjectId('62b52dd204fcfd7f1f02a9d1')
-    //     buku1: 'doraemon'
+    //     _id: ObjectId('62b53bdc3ea42f3ae884948b'),
     //   }
     // ).then((result) => console.log(result))
     // .catch((error) => console.log(error))
 
     // menghapus lebih dari satu data pada collection1
 
-    db.collection('collection1').deleteMany(
-      {
+    // db.collection('collection1').deleteMany(
+    //   {
         // _id: ObjectId('62b52baae33f7080eebb2b43')
-        buku: 'naruto'
-      }
-    ).then((result) => console.log(result))
-    .catch((error) => console.log(error))
+    //     buku: 'naruto'
+    //   }
+    // ).then((result) => console.log(result))
+    // .catch((error) => console.log(error))
 });
