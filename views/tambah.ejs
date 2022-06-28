@@ -1,15 +1,25 @@
+<% if (typeof errors != 'undefined') { %>
+    <div class="alert alert-danger col-md-6" role="alert">
+        <ul>
+            <% errors.forEach(error => { %>
+                <li> <%= error.msg %>  </li>                
+                <% }) %>
+            <%= errors.msg %> 
+        </ul>
+    </div>
+<% } %>
 <form method="post" action="/tambah">
     <div class="mb-3 col-md-6">
         <label for="namaBuku" class="form-label">Nama Buku</label>
-        <input type="text" class="form-control" nama="namabuku" id="namaBuku" placeholder="masukkan nama Buku..">
+        <input type="text" class="form-control" name="namaBuku" id="namaBuku" placeholder="masukkan nama Buku.." required>
     </div>
     <div class="mb-3 col-md-6">
         <label for="penerbit" class="form-label">Nama Penerbit</label>
-        <input type="text" class="form-control" name="penerbit" id="penerbit" placeholder="masukkan nama penerbit.. ">
+        <input type="text" class="form-control" name="penerbit" id="penerbit" placeholder="masukkan nama penerbit.. " required>
     </div>
     <div class="mb-3 col-md-6">
         <label for="pengarang" class="form-label">Nama Pengarang</label>
-        <input type="text" class="form-control" name="pengarang" id="pengarang" placeholder="masukkan nama pengarang..">
+        <input type="text" class="form-control" name="pengarang" id="pengarang" placeholder="masukkan nama pengarang.. " required>
     </div>
     <div class="mb-3 col-md-6">
         <button type="submit" class="btn btn-primary">Tambah</button>

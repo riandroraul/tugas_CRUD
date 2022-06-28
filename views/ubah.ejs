@@ -1,17 +1,30 @@
-<form method="post" action="/ubah">
+<% if (typeof errors != 'undefined') { %>
+    <div class="alert alert-danger col-md-6" role="alert">
+        <ul>
+            <% errors.forEach(error => { %>
+                <li> <%= error.msg %>  </li>                
+                <% }) %>
+            <%= errors.msg %> 
+        </ul>
+    </div>
+<% } %>
+
+<form method="post" action="/ubah?_method=PUT">
     <div class="mb-3 col-md-6">
         <label for="namaBuku" class="form-label">Nama Buku</label>
-        <input type="text" class="form-control" nama="namabuku" id="namaBuku" placeholder="ubah nama Buku..">
+        <input type="hidden" name="_id" value="<%= book._id %> ">
+        <input type="hidden" name="oldNamaBuku" value="<%= book.namaBuku || book.oldNamaBuku %> ">
+        <input type="text" class="form-control" value="<%= book.namaBuku %>" name="namaBuku" id="namaBuku" placeholder="ubah nama Buku.." required>
     </div>
     <div class="mb-3 col-md-6">
         <label for="penerbit" class="form-label">Nama Penerbit</label>
-        <input type="text" class="form-control" name="penerbit" id="penerbit" placeholder="ubah nama penerbit.. ">
+        <input type="text" class="form-control" value="<%= book.penerbit %> " name="penerbit" id="penerbit" placeholder="ubah nama penerbit.. " required>
     </div>
     <div class="mb-3 col-md-6">
         <label for="pengarang" class="form-label">Nama Pengarang</label>
-        <input type="text" class="form-control" name="pengarang" id="pengarang" placeholder="ubah nama pengarang..">
+        <input type="text" class="form-control" value="<%= book.pengarang %> " name="pengarang" id="pengarang" placeholder="ubah nama pengarang.." required>
     </div>
     <div class="mb-3 col-md-6">
-        <button type="submit" class="btn btn-primary">Tambah</button>
+        <button type="submit" class="btn btn-primary">Ubah</button>
     </div>
 </form>

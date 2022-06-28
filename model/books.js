@@ -1,6 +1,5 @@
 const mongoose = require('mongoose')
 
-
 // membuat schema
 
 const Book = mongoose.model('Book', {
