@@ -1,13 +1,12 @@
+    <a href="/tambah" class="btn btn-primary my-3">Tambah Data Buku</a>
+    
     <h4>Daftar Buku</h4>
-
-    <a href="/tambah" class="btn btn-primary my-3"> Tambah Data Buku</a>
-
     <% if (msg.length !== 0) { %>
       <div class="alert alert-success col-md-6" role="alert">
         <%= msg %> 
       </div>
     <% } %>
-    <table class="table">
+    <table class="table table-hover">
       <thead>
         <tr>
           <th scope="col">No</th>
@@ -25,11 +24,13 @@
         <td><%= book.penerbit %></td>
         <td><%= book.pengarang %></td>
         <td>
-          <a href="/ubah"><span class="badge text-bg-success">ubah</span></a>
+            <a href="/ubah/<%= book.namaBuku %>"><span class="badge text-bg-success">ubah</span></a>
+
           <form action="/hapus?_method=DELETE" method="post" class="d-inline">
             <input type="hidden" name="namaBuku" id="namaBuku" value="<%= book.namaBuku %>">
             <button type="submit" class="badge text-bg-danger" onclick="return confirm('buku ini akan dihapus ?');">hapus</button>
           </form>
+          
         </td>
       </tr>
     </tbody>

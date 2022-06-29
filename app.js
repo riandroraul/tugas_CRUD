@@ -1,6 +1,6 @@
 const express = require ('express');
 const expressLayout = require ('express-ejs-layouts');
-const { body, validationResult, check } = require('express-validator')
+const { body, validationResult} = require('express-validator')
 const session = require('express-session')
 const cookieParser = require('cookie-parser')
 const flash = require('connect-flash')
@@ -15,7 +15,7 @@ const port = 3000;
 
 app.use(methodOverride('_method'))
 
-app.use(flash())  
+app.use(flash())
 
 // menggunakan view engine ejs
 app.set('view engine', 'ejs');
@@ -40,6 +40,51 @@ app.get('/', (req, res) => {
     // res.send('hello world')
     // res.sendFile('./index.html', {root: __dirname})
     res.render('index', {title: 'Halaman Home', layout: 'layouts/main-layout'});
+})
+
+// mengubah data buku
+app.get('/ubah/:namaBuku', async (req, res) => {
+    const book = await Book.findOne({namaBuku: req.params.namaBuku})
+    res.render('ubah', {title: 'Ubah Data Buku', layout: 'layouts/main-layout', book})
+})
+
+app.put('/ubah',
+    [
+        body('namaBuku').custom( async (value, {req}) => {
+            const duplikat = await Book.findOne({namaBuku: value})
+            if(value !== req.body.oldNamaBuku && duplikat){ // jika ada data nama buku yang sama
+                throw new Error('Nama Buku Sudah Ada')
+            }
+            return true;
+        }),
+    ],
+    (req, res) => {
+        const errors = validationResult(req)
+        if(!errors.isEmpty()){ 
+            // return res.status(400).json({errors: errors.array()})
+            res.render('ubah', {
+                title: 'Ubah Data Buku',
+                layout: 'layouts/main-layout',
+                errors: errors.array(),
+                book: req.body
+            });
+        }
+        else{
+            // console.log(req.body)
+            Book.updateOne(
+                {_id: req.body._id},
+                {
+                    $set: {
+                        namaBuku: req.body.namaBuku,
+                        penerbit: req.body.penerbit,
+                        pengarang: req.body.pengarang
+                    }
+                }
+            ).then( (result) => {
+                req.flash('msg', 'Data Buku Berhasil Diubah')
+                res.redirect('/books')
+            });
+        }
 })
 
 // proses data buku melalui form 
@@ -89,41 +134,6 @@ app.get('/tambah', (req, res) => {
     res.render('tambah', {title: 'Tambah Data Buku', layout: 'layouts/main-layout'})
 })
 
-// mengubah data buku
-// app.get('/ubah/:namaBuku', async (req, res) => {
-//     const book = await Book.findOne({namaBuku: req.params.namaBuku})
-//     res.render('ubah', {title: 'Ubah Data Buku', layout: 'layouts/main-layout', book})
-// })
-
-
-app.put('/ubah',
-    [
-        body('namaBuku').custom( async (value, {req}) => {
-            const duplikat = await Book.findOne({namaBuku: value})
-            if(value !== req.body.oldNamaBuku && duplikat){ // jika ada data nama buku yang sama
-                throw new Error('Nama Buku Sudah Ada')
-            }
-            return true;
-        }),
-    ],
-    (req, res) => {
-        const errors = validationResult(req)
-        if(!errors.isEmpty()){ 
-            // return res.status(400).json({errors: errors.array()})
-            res.render('tambah', {
-                title: 'Tambah Data Buku',
-                layout: 'layouts/main-layout',
-                errors: errors.array()
-            });
-        }else{
-            // console.log(req.body)
-            Book.insertMany(req.body, (error, result) => {
-                // kirimkan flash message
-                req.flash('msg', 'Data Buku Berhasil Ditambahkan')
-                res.redirect('/books')
-            });
-        }
-})
 
 // menghapus data buku
 // app.get('/hapus/:namaBuku', async (req, res) => {

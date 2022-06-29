@@ -17,5 +17,4 @@ const Book = mongoose.model('Book', {
     }
 });
 
-
 module.exports = Book;
