@@ -11,10 +11,10 @@
 
 <form method="post" action="/ubah?_method=PUT">
     <input type="hidden" name="_id" value="<%= book._id %>">
-    <input type="hidden" name="oldNamaBuku" value="<%= book.namaBuku || book.oldNamaBuku %>">
+    <input type="hidden" name="oldNamaBuku" value="<%= book.oldNamaBuku || book.namaBuku %>"> 
     <div class="mb-3 col-md-6">
         <label for="namaBuku" class="form-label">Nama Buku</label>
-        <input type="text" class="form-control" value="<%= book.namaBuku %>" name="namaBuku" id="namaBuku" placeholder="ubah nama Buku.." required>
+        <input type="text" class="form-control" value="<%= book.namaBuku %>" name="namaBuku" id="namaBukuu" placeholder="ubah nama Buku.." required>
     </div>
     <div class="mb-3 col-md-6">
         <label for="penerbit" class="form-label">Nama Penerbit</label>

@@ -22,7 +22,7 @@ app.set('view engine', 'ejs');
 app.use(expressLayout)
 app.use(express.static('public'))
 app.use(express.urlencoded({extended: true}))
-
+ 
 // konfigurasi flash
 app.use(cookieParser('secret'));
 app.use(
@@ -39,12 +39,20 @@ app.use(flash())
 app.get('/', (req, res) => {
     // res.send('hello world')
     // res.sendFile('./index.html', {root: __dirname})
-    res.render('index', {title: 'Halaman Home', layout: 'layouts/main-layout'});
+    res.status(200)
+    res.render('index', {title: 'Halaman Home', layout: 'layouts/main-layout',})
+})
+
+app.get('/books', async (req, res) => {
+    const books =  await Book.find()
+    res.status(200)
+    res.render('books', {title: 'Halaman Buku', layout: 'layouts/main-layout', books, msg: req.flash('msg')})
 })
 
 // mengubah data buku
 app.get('/ubah/:namaBuku', async (req, res) => {
     const book = await Book.findOne({namaBuku: req.params.namaBuku})
+    res.status(200)
     res.render('ubah', {title: 'Ubah Data Buku', layout: 'layouts/main-layout', book})
 })
 
@@ -52,15 +60,18 @@ app.put('/ubah',
     [
         body('namaBuku').custom( async (value, {req}) => {
             const duplikat = await Book.findOne({namaBuku: value})
+            // console.log(value)
             if(value !== req.body.oldNamaBuku && duplikat){ // jika ada data nama buku yang sama
                 throw new Error('Nama Buku Sudah Ada')
             }
+            // console.log(value)
             return true;
         }),
     ],
     (req, res) => {
+        // console.log(req.body)
         const errors = validationResult(req)
-        if(!errors.isEmpty()){ 
+        if(!errors.isEmpty()){ // jika ada eror
             // return res.status(400).json({errors: errors.array()})
             res.render('ubah', {
                 title: 'Ubah Data Buku',
@@ -87,6 +98,11 @@ app.put('/ubah',
         }
 })
 
+app.get('/tambah', (req, res) => {
+    res.status(200)
+    res.render('tambah', {title: 'Tambah Data Buku', layout: 'layouts/main-layout'})
+})
+
 // proses data buku melalui form 
 app.post('/tambah',
     [
@@ -100,7 +116,7 @@ app.post('/tambah',
     ],
     (req, res) => {
         const errors = validationResult(req)
-        if(!errors.isEmpty()){ 
+        if(!errors.isEmpty()){ // jika ada error request
             // return res.status(400).json({errors: errors.array()})
             res.render('tambah', {
                 title: 'Tambah Data Buku',
@@ -112,6 +128,7 @@ app.post('/tambah',
             Book.insertMany(req.body, (error, result) => {
                 // kirimkan flash message
                 req.flash('msg', 'Data Buku Berhasil Ditambahkan')
+                res.status(200)
                 res.redirect('/books')
             });
         }
@@ -122,17 +139,10 @@ app.get('/about', (req, res) => {
     // res.sendFile('./about.html', {root: __dirname})
     res.render('about', {title: 'Halaman About', layout: 'layouts/main-layout'})
 })
-app.get('/books', async (req, res) => {
-    const books =  await Book.find()
-    res.render('books', {title: 'Halaman Buku',layout: 'layouts/main-layout', books, msg: req.flash('msg')})
-})
+
 // app.get('/product/:id', (req, res) => {
 //     res.send(`Product id : ${req.params.id} <br> category: ${req.query.category}`)
 // })
-
-app.get('/tambah', (req, res) => {
-    res.render('tambah', {title: 'Tambah Data Buku', layout: 'layouts/main-layout'})
-})
 
 
 // menghapus data buku
@@ -154,6 +164,7 @@ app.delete('/hapus', (req, res) => {
     // res.send(req.body)
     Book.deleteOne({namaBuku: req.body.namaBuku}).then((result) => {
         req.flash('msg', 'Data Buku Berhasil Dihapus')
+        res.status(200)
         res.redirect('/books')
     });
 });

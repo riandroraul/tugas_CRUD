@@ -19,7 +19,7 @@
     <% books.forEach((book, index) => { %>
       <tbody>
       <tr>
-        <th scope="row"><%= index +1  %></th>
+        <th scope="row"><%= index + 1  %></th>
         <td><%= book.namaBuku %> </td>
         <td><%= book.penerbit %></td>
         <td><%= book.pengarang %></td>
@@ -28,7 +28,7 @@
 
           <form action="/hapus?_method=DELETE" method="post" class="d-inline">
             <input type="hidden" name="namaBuku" id="namaBuku" value="<%= book.namaBuku %>">
-            <button type="submit" class="badge text-bg-danger" onclick="return confirm('buku ini akan dihapus ?');">hapus</button>
+            <button type="submit" class="badge text-bg-danger" onclick="return confirm(`Buku <%= book.namaBuku %> akan dihapus ?`);">hapus</button>
           </form>
           
         </td>
