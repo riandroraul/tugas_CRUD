@@ -1,0 +1,21 @@
+<% if (typeof errors != 'undefined') { %>
+  <div class="alert alert-danger col-md-6" role="alert">
+      <ul>
+          <% errors.forEach(error => { %>
+              <li> <%= error.msg %> </li>                
+              <% }) %>
+          <%= errors.msg %>
+      </ul>
+  </div>
+<% } %>
+<form method="post" action="/loginUser">
+  <div class="mb-3 col-lg-6">
+    <label for="email" class="form-label">Email address</label>
+    <input type="email" class="form-control" id="email" name="email">
+  </div>
+  <div class="mb-3 col-lg-6">
+    <label for="exampleInputPassword1" class="form-label">Password</label>
+    <input type="password" class="form-control col-md-6" name="password" id="password" >
+  </div>
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>

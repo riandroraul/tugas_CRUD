@@ -9,6 +9,7 @@ const methodOverride = require('method-override')
 
 require('./database')
 const Book = require('./model/books');
+const User = require('./model/users');
 
 const app = express();
 const port = 3000;
@@ -43,10 +44,104 @@ app.get('/', (req, res) => {
     res.render('index', {title: 'Halaman Home', layout: 'layouts/main-layout',})
 })
 
+app.get('/login', (req, res) => {
+    // res.send('hello world')
+    // res.sendFile('./index.html', {root: __dirname})
+    res.status(200)
+    res.render('login', {title: 'Halaman Login', layout: 'layouts/main-layout',})
+})
+
+app.post('/loginUser',
+    [
+        body('email').custom( async (value) => {
+            const cekUser = await User.findOne({email: value})
+            if(!cekUser){ // jika ada user 
+                throw new Error('email salah')
+            }
+            return true;
+        }),
+        body('password').custom( async (value) => {
+            const cekPassword = await User.findOne({password: value})
+            if(!cekPassword){ // jika password benar
+                throw new Error('Password Salah!')
+            }
+            return true;
+        }),
+    ],
+    (req, res) => {
+        const errors = validationResult(req)
+        console.log(errors)
+        if(!errors.isEmpty()){ // jika error request tidak kosong
+            // return res.status(400).json({errors: errors.array()})
+            res.render('login', {
+                title: 'Halaman Login',
+                layout: 'layouts/main-layout',
+                errors: errors.array()
+            });
+        }else{
+            req.flash('msg', 'Login Berhasil')
+            res.status(200)
+            res.redirect('/books')
+            // });
+        }
+})
+
+app.get('/register', (req, res) => {
+    // res.send('hello world')
+    // res.sendFile('./index.html', {root: __dirname})
+    res.status(200)
+    res.render('register', {title: 'Halaman Register', layout: 'layouts/main-layout',})
+})
+
+app.post('/tambahUser',
+    [
+        body('email').custom( async (value) => {
+            const duplikatEmail = await User.findOne({email: value})
+            if(duplikatEmail){ // jika ada data nama buku yang sama
+                throw new Error('email sudah digunakan')
+            }
+            return true;
+        }),
+    ],
+    (req, res) => {
+        const errors = validationResult(req)
+        if(!errors.isEmpty()){ // jika ada error request
+            // return res.status(400).json({errors: errors.array()})
+            res.render('tambah', {
+                title: 'Tambah Data User',
+                layout: 'layouts/main-layout',
+                errors: errors.array()
+            });
+        }else{
+            // console.log(req.body)
+            User.insertMany(
+                {
+                    nama: req.body.nama,
+                    email: req.body.email,
+                    password: req.body.password,
+                    role: 3
+                }, 
+                (error, result) => {
+                // kirimkan flash message
+                req.flash('msg', 'Register Berhasil')
+                res.status(200)
+                res.redirect('/books')
+            });
+        }
+})
+
+
 app.get('/books', async (req, res) => {
     const books =  await Book.find()
     res.status(200)
     res.render('books', {title: 'Halaman Buku', layout: 'layouts/main-layout', books, msg: req.flash('msg')})
+})
+
+
+app.get('/users', async (req, res) => {
+    const users =  await User.find()
+    res.status(200)
+    res.render('users', {title: 'Halaman User', layout: 'layouts/main-layout', users, msg: req.flash('msg')})
 })
 
 // mengubah data buku
