@@ -41,7 +41,7 @@ app.get('/', (req, res) => {
     // res.send('hello world')
     // res.sendFile('./index.html', {root: __dirname})
     res.status(200)
-    res.render('index', {title: 'Halaman Home', layout: 'layouts/main-layout',})
+    res.render('index', {title: 'Halaman Home', layout: 'main-layout',})
 })
 
 app.get('/login', (req, res) => {
@@ -119,7 +119,7 @@ app.post('/tambahUser',
                     nama: req.body.nama,
                     email: req.body.email,
                     password: req.body.password,
-                    role: 3
+                    role: 2
                 }, 
                 (error, result) => {
                 // kirimkan flash message
