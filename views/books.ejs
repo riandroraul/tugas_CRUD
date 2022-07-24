@@ -1,39 +1,50 @@
+<% if (users.role == 1) { %>
     <a href="/tambah" class="btn btn-primary my-3">Tambah Data Buku</a>
-    
-    <h4>Daftar Buku</h4>
-    <% if (msg.length !== 0) { %>
-      <div class="alert alert-success col-md-6" role="alert">
-        <%= msg %> 
-      </div>
     <% } %>
-    <table class="table table-hover">
-      <thead>
-        <tr>
-          <th scope="col">No</th>
-          <th scope="col">Nama Buku</th>
-          <th scope="col">Penerbit</th>
-          <th scope="col">Pengarang</th>
-          <th scope="col">Aksi</th>
-        </tr>
-      </thead>
-    <% books.forEach((book, index) => { %>
-      <tbody>
-      <tr>
-        <th scope="row"><%= index + 1  %></th>
-        <td><%= book.namaBuku %> </td>
-        <td><%= book.penerbit %></td>
-        <td><%= book.pengarang %></td>
-        <td>
-            <a href="/ubah/<%= book.namaBuku %>"><span class="badge text-bg-success">ubah</span></a>
 
-          <form action="/hapus?_method=DELETE" method="post" class="d-inline">
-            <input type="hidden" name="namaBuku" id="namaBuku" value="<%= book.namaBuku %>">
-            <button type="submit" class="badge text-bg-danger" onclick="return confirm(`Buku <%= book.namaBuku %> akan dihapus ?`);">hapus</button>
-          </form>
-          
-        </td>
-      </tr>
-    </tbody>
-    <% }) %>
-  </table>
-    <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ex in cum dolor quibusdam maiores. Non eum aliquid ut maiores quibusdam?</p>
+
+        <h4>Daftar Buku</h4>
+        <% if (msg.length !== 0) { %>
+            <div class="alert alert-success col-md-6" role="alert">
+                <%= msg %>
+            </div>
+            <% } %>
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">No</th>
+                            <th scope="col">Nama Buku</th>
+                            <th scope="col">Penerbit</th>
+                            <th scope="col">Pengarang</th>
+                            <th scope="col">Aksi</th>
+                        </tr>
+                    </thead>
+                    <% books.forEach((book, index) => { %>
+                        <tbody>
+                            <tr>
+                                <th scope="row">
+                                    <%= index + 1  %>
+                                </th>
+                                <td>
+                                    <%= book.namaBuku %>
+                                </td>
+                                <td>
+                                    <%= book.penerbit %>
+                                </td>
+                                <td>
+                                    <%= book.pengarang %>
+                                </td>
+                                <td>
+                                    <a href="/ubah/<%= book.namaBuku %>"><span class="badge text-bg-success">ubah</span></a>
+
+                                    <form action="/hapus?_method=DELETE" method="post" class="d-inline">
+                                        <input type="hidden" name="namaBuku" id="namaBuku" value="<%= book.namaBuku %>">
+                                        <button type="submit" class="badge text-bg-danger" onclick="return confirm(`Buku <%= book.namaBuku %> akan dihapus ?`);">hapus</button>
+                                    </form>
+
+                                </td>
+                            </tr>
+                        </tbody>
+                        <% }) %>
+                </table>
+                <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ex in cum dolor quibusdam maiores. Non eum aliquid ut maiores quibusdam?</p>
