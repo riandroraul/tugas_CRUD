@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>
+        <%= title %>
+    </title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+</head>
+
+<% if (typeof errors != 'undefined') { %>
+    <div class="alert alert-danger col-md-6" role="alert">
+        <ul>
+            <% errors.forEach(error => { %>
+                <li>
+                    <%= error.msg %>
+                </li>
+                <% }) %>
+                    <%= errors.msg %>
+        </ul>
+    </div>
+    <% } %>
+
+        <body>
+            <div class="container">
+                <h1>
+                    <%= title %>
+                </h1>
+                <form method="post" action="/tambahUser">
+                    <div class="mb-3 col-lg-6">
+                        <label for="nama" class="form-label">Nama</label>
+                        <input type="text" class="form-control col-md-6" id="nama" name="nama">
+                    </div>
+                    <div class="mb-3 col-lg-6">
+                        <label for="email" class="form-label">Email address</label>
+                        <input type="email" name="email" id="email" class="form-control col-md-6">
+                    </div>
+                    <div class="mb-3 col-lg-6">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control col-md-6" name="password" id="password">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
+        </body>
+
+</html>
