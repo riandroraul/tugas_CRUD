@@ -66,10 +66,8 @@ app.post('/loginUser', [
         }),
     ],
     async (req, res) => {
-        const session = req.session
-        console.log(session)
         const errors = validationResult(req)
-        const userLogin = await User.findOne({email: req.body.email})
+        // const userLogin = await User.findOne({email: req.body.email})
         const books = await Book.find()
         if (!errors.isEmpty()) { // jika error request tidak kosong
             // return res.status(400).json({errors: errors.array()})
@@ -82,7 +80,7 @@ app.post('/loginUser', [
             // req.flash('msg', 'Login Berhasil')
             const session = req.session
             session.email = req.body.email
-            const userLogin = User.findOne({email: req.session.email})
+            const userLogin = await User.findOne({email: req.session.email})
             console.log(userLogin)
             res.status(200)
             // res.redirect('/books')
@@ -92,10 +90,15 @@ app.post('/loginUser', [
     })
 
 app.get('/books', async(req, res) => {
+    const session = req.session
     const books = await Book.find()
     const users = await User.find()
-    res.status(200)
-    res.render('books', { title: 'Halaman Buku', layout: 'layouts/main-layout', books, users, msg: req.flash('msg') })
+    if(session.email === undefined){
+        res.redirect('/login')
+    }else{
+        res.status(200)
+        res.render('books', { title: 'Halaman Buku', layout: 'layouts/main-layout', books, users, msg: req.flash('msg') })
+    }
 })
 
 
