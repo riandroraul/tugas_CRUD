@@ -12,9 +12,11 @@
           <li class="nav-item">
             <a class="nav-link text-light" href="/about">About</a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link text-light" href="/users">Users</a>
-          </li>
+          <% if (userLogin.role == 1 || userLogin.role == 2) { %>
+            <li class="nav-item">
+              <a class="nav-link text-light" href="/users">Users</a>
+            </li>
+          <% } %>
         </ul>
       </div>
     </div>

@@ -31,11 +31,12 @@ app.use(cookieParser('secret'));
 app.use(
     session({
         cookie: { maxAge: 6000 },
+        // key: session,
         secret: 'secret',
         resave: true,
         saveUninitialized: true,
     })
-);
+)
 
 app.use(flash())
 
@@ -43,17 +44,12 @@ app.use(userRoutes)
 
 app.get('/', (req, res) => {
     res.status(200)
-    res.render('index', { title: 'Halaman Home', layout: 'layouts/main-layout', })
-})
-
-app.get('/login', (req, res) => {
-    res.status(200)
-    res.render('login', { title: 'Halaman Login', layout: 'login', })
+    res.render('index', { title: 'Halaman Home', layout: 'layouts/main-layout'})
 })
 
 
 app.post('/loginUser', [
-        body('email').custom(async(value) => {
+        body('email').custom(async (value) => {
             const cekUser = await User.findOne({ email: value })
             if (!cekUser) { // jika ada user 
                 throw new Error('email salah')
@@ -68,25 +64,25 @@ app.post('/loginUser', [
             return true;
         }),
     ],
-    (req, res) => {
+    async (req, res) => {
         const errors = validationResult(req)
-        console.log(errors)
+        const userLogin = await User.findOne({email: req.body.email})
+        const books = await Book.find()
         if (!errors.isEmpty()) { // jika error request tidak kosong
             // return res.status(400).json({errors: errors.array()})
             res.render('login', {
                 title: 'Halaman Login',
-                layout: 'layouts/main-layout',
+                layout: 'login',
                 errors: errors.array()
             });
         } else {
-            req.flash('msg', 'Login Berhasil')
+            // req.flash('msg', 'Login Berhasil')
             res.status(200)
-            res.redirect('/books')
+            // res.redirect('/books')
+            res.render('books', {books, userLogin, title: 'Halaman Buku', layout: 'layouts/main-layout', msg: 'Login Berhasil'})
                 // });
         }
     })
-
-
 
 app.get('/books', async(req, res) => {
     const books = await Book.find()
@@ -97,9 +93,9 @@ app.get('/books', async(req, res) => {
 
 
 app.get('/users', async(req, res) => {
-    const users = await User.find()
+    const userLogin = await User.find()
     res.status(200)
-    res.render('users', { title: 'Halaman User', layout: 'layouts/main-layout', users, msg: req.flash('msg') })
+    res.render('users', { title: 'Halaman User', layout: 'layouts/main-layout', userLogin, msg: req.flash('msg') })
 })
 
 // mengubah data buku
@@ -146,10 +142,15 @@ app.put('/ubah', [
         }
     })
 
-app.get('/tambah', (req, res) => {
-    const users = User.find()
-    res.status(200)
-    res.render('tambah', { title: 'Tambah Data Buku', layout: 'layouts/main-layout', users })
+app.get('/tambah', async (req, res) => {
+    const users = await User.find()
+    // console.log(users)
+    if(userLogin.role == 3){
+        res.redirect('/books')
+    } else{
+        res.status(200)
+        res.render('tambah', { title: 'Tambah Data Buku', layout: 'layouts/main-layout', users })
+    }
 })
 
 // proses data buku melalui form 
@@ -183,29 +184,8 @@ app.post('/tambah', [
     })
 
 app.get('/about', (req, res) => {
-    // res.send('ini adalah halaman about')
-    // res.sendFile('./about.html', {root: __dirname})
     res.render('about', { title: 'Halaman About', layout: 'layouts/main-layout' })
 })
-
-// app.get('/product/:id', (req, res) => {
-//     res.send(`Product id : ${req.params.id} <br> category: ${req.query.category}`)
-// })
-
-
-// menghapus data buku
-// app.get('/hapus/:namaBuku', async (req, res) => {
-//     const book = await Book.findOne({namaBuku: req.params.namaBuku})
-//     if(!book){ // jika namaBuku tidak ada 
-//         res.status(404)
-//         res.render('page_error', {title: 'Nama Buku tidak ada', layout: 'layouts/main-layout'})
-//     }else{ // jika ada namaBuku
-//         Book.deleteOne({_id: book._id}).then( (result) => {
-//             req.flash('msg', 'Data Buku Berhasil Dihapus')
-//             res.redirect('/books')
-//         })
-//     }
-// })
 
 // menghapus data buku opsi kedua
 app.delete('/hapus', (req, res) => {
@@ -221,6 +201,7 @@ app.use('/', (req, res) => { // untuk menangkap url yang tidak ada
     res.status(404)
     res.render('page_error', { title: 'Halaman Tidak Ditemukan', layout: 'layouts/main-layout' })
 })
+
 app.listen(port, () => {
     console.log(`Books App | listening at http://localhost:${port}`)
 });
