@@ -27,13 +27,14 @@ app.use(express.static('public'))
 app.use(express.urlencoded({ extended: true }))
 
 // konfigurasi flash
+const oneDay = 1000 * 60 * 60 * 24;
 app.use(cookieParser('secret'));
 app.use(
     session({
-        cookie: { maxAge: 6000 },
+        cookie: { maxAge: oneDay},
         // key: session,
         secret: 'secret',
-        resave: true,
+        resave: false,
         saveUninitialized: true,
     })
 )
@@ -65,6 +66,8 @@ app.post('/loginUser', [
         }),
     ],
     async (req, res) => {
+        const session = req.session
+        console.log(session)
         const errors = validationResult(req)
         const userLogin = await User.findOne({email: req.body.email})
         const books = await Book.find()
@@ -77,6 +80,10 @@ app.post('/loginUser', [
             });
         } else {
             // req.flash('msg', 'Login Berhasil')
+            const session = req.session
+            session.email = req.body.email
+            const userLogin = User.findOne({email: req.session.email})
+            console.log(userLogin)
             res.status(200)
             // res.redirect('/books')
             res.render('books', {books, userLogin, title: 'Halaman Buku', layout: 'layouts/main-layout', msg: 'Login Berhasil'})
