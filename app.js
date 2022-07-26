@@ -258,8 +258,13 @@ app.delete('/hapus', (req, res) => {
 });
 
 app.use('/', (req, res) => { // untuk menangkap url yang tidak ada
-    res.status(404)
-    res.render('page_error', { title: 'Halaman Tidak Ditemukan', layout: 'layouts/main-layout' })
+    const userLogin = User.find({email: req.session.email})
+    if(req.session.email === undefined){
+        res.redirect('/login')
+    }else{
+        res.status(404)
+        res.render('page_error', { title: 'Halaman Tidak Ditemukan', layout: 'layouts/main-layout', userLogin })
+    }
 })
 
 app.listen(port, () => {
