@@ -1,4 +1,4 @@
-<% if (userLogin.role == 1 || userLogin.role == 2) { %>
+<% if (userLogin[0].role == 1 || userLogin[0].role == 2) { %>
     <a href="/tambah" class="btn btn-primary my-3">Tambah Data Buku</a>
     <% } %>
 
@@ -16,7 +16,7 @@
                             <th scope="col">Nama Buku</th>
                             <th scope="col">Penerbit</th>
                             <th scope="col">Pengarang</th>
-                        <% if (userLogin.role == 1 || userLogin.role == 2) { %>
+                        <% if (userLogin[0].role == 1 || userLogin[0].role == 2) { %>
                             <th scope="col">Aksi</th>
                         <% } %>
                         </tr>
@@ -37,7 +37,7 @@
                                     <%= book.pengarang %>
                                 </td>
 
-                                <% if (userLogin.role == 1 || userLogin.role == 2) { %>
+                                <% if (userLogin[0].role == 1 || userLogin[0].role == 2) { %>
                                 <td>
                                     <a href="/ubah/<%= book.namaBuku %>"><span class="badge text-bg-success">ubah</span></a>
 

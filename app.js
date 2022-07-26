@@ -12,6 +12,7 @@ require('./database')
 const Book = require('./model/books');
 const User = require('./model/users');
 const userRoutes = require('./routes/user.route');
+const req = require('express/lib/request');
 
 const app = express();
 const port = 3000;
@@ -43,22 +44,34 @@ app.use(flash())
 
 app.use(userRoutes)
 
-app.get('/', (req, res) => {
-    res.status(200)
-    res.render('index', { title: 'Halaman Home', layout: 'layouts/main-layout'})
+app.get('/', async (req, res) => {
+    const userLogin = await User.find({email: req.session.email})
+    if(req.session.email === undefined){
+        res.redirect('login')
+    }else{
+        res.status(200)
+        res.render('index', { title: 'Halaman Home', layout: 'layouts/main-layout', userLogin})
+    }
 })
 
+app.get('/loginUser', (req, res) => {
+    if(req.session.email === undefined){
+        res.redirect('/books')
+    }else{
+        res.redirect('/')
+    }
+})
 
 app.post('/loginUser', [
-        body('email').custom(async (value) => {
-            const cekUser = await User.findOne({ email: value })
+        body('email').custom(async (valueEmail) => { 
+            const cekUser = await User.findOne({ email: valueEmail })
             if (!cekUser) { // jika ada user 
                 throw new Error('email salah')
             }
             return true;
         }),
-        body('password').custom(async(value) => {
-            const cekPassword = await User.findOne({ password: value })
+        body('password').custom(async(valuePassword) => {
+            const cekPassword = await User.findOne({ password: valuePassword})
             if (!cekPassword) { // jika password benar
                 throw new Error('Password Salah!')
             }
@@ -80,39 +93,63 @@ app.post('/loginUser', [
             // req.flash('msg', 'Login Berhasil')
             const session = req.session
             session.email = req.body.email
-            const userLogin = await User.findOne({email: req.session.email})
-            console.log(userLogin)
+            const userLogin = await User.find({email: req.session.email})
+            // console.log(userLogin)
             res.status(200)
             // res.redirect('/books')
-            res.render('books', {books, userLogin, title: 'Halaman Buku', layout: 'layouts/main-layout', msg: 'Login Berhasil'})
+            if(req.session.email === undefined){
+                res.redirect('/login')
+            }else{
+                res.render('books', {books, userLogin, title: 'Halaman Buku', layout: 'layouts/main-layout', msg: 'Login Berhasil'})
+            }
                 // });
         }
     })
 
 app.get('/books', async(req, res) => {
-    const session = req.session
+    // const session = req.session
     const books = await Book.find()
-    const users = await User.find()
-    if(session.email === undefined){
+    const userLogin = await User.find({email: req.session.email})
+    // console.log(userLogin)
+    if(req.session.email === undefined){
         res.redirect('/login')
     }else{
         res.status(200)
-        res.render('books', { title: 'Halaman Buku', layout: 'layouts/main-layout', books, users, msg: req.flash('msg') })
+        res.render('books', { title: 'Halaman Buku', layout: 'layouts/main-layout', books, userLogin, msg: req.flash('msg') })
     }
 })
 
 
 app.get('/users', async(req, res) => {
-    const userLogin = await User.find()
-    res.status(200)
-    res.render('users', { title: 'Halaman User', layout: 'layouts/main-layout', userLogin, msg: req.flash('msg') })
+    const userLogin = await User.find({email: req.session.email})
+    const users = await User.find()
+    // console.log(userLogin)
+    if(userLogin[0].role !== 1){
+        res.redirect('/')
+    } else{
+        if(req.session.email === undefined){
+            res.redirect('/login')
+        }else{
+            res.status(200)
+            res.render('users', { title: 'Halaman User', layout: 'layouts/main-layout', userLogin, users, msg: req.flash('msg') })
+        }
+    }
 })
 
 // mengubah data buku
 app.get('/ubah/:namaBuku', async(req, res) => {
     const book = await Book.findOne({ namaBuku: req.params.namaBuku })
-    res.status(200)
-    res.render('ubah', { title: 'Ubah Data Buku', layout: 'layouts/main-layout', book })
+    const userLogin = await User.find({email: req.session.email})
+    if(req.session.email === undefined){
+        res.redirect('/login')
+    }else{
+        if(userLogin[0].role === 3){
+            res.redirect('/books')
+        }else{
+            res.status(200)
+            res.render('ubah', { title: 'Ubah Data Buku', layout: 'layouts/main-layout', book })
+        }
+    }
 })
 
 app.put('/ubah', [
@@ -153,13 +190,16 @@ app.put('/ubah', [
     })
 
 app.get('/tambah', async (req, res) => {
-    const users = await User.find()
-    // console.log(users)
-    if(userLogin.role == 3){
-        res.redirect('/books')
-    } else{
-        res.status(200)
-        res.render('tambah', { title: 'Tambah Data Buku', layout: 'layouts/main-layout', users })
+    const userLogin = await User.find({email: req.session.email})
+    if (req.session.email === undefined){
+        res.redirect('/login')
+    } else {
+        if(userLogin[0].role === 3){
+            res.redirect('/books')
+        } else{
+            res.status(200)
+            res.render('tambah', { title: 'Tambah Data Buku', layout: 'layouts/main-layout', userLogin })
+        }
     }
 })
 
@@ -193,9 +233,19 @@ app.post('/tambah', [
         }
     })
 
-app.get('/about', (req, res) => {
-    res.render('about', { title: 'Halaman About', layout: 'layouts/main-layout' })
+app.get('/about', async (req, res) => {
+    const userLogin = await User.find({email: req.session.email})
+    if(req.session.email === undefined){
+        res.redirect('/login')
+    }else{
+        res.render('about', { title: 'Halaman About', layout: 'layouts/main-layout', userLogin })
+    }
 })
+
+app.get('/logout',(req,res) => {
+    req.session.destroy();
+    res.redirect('/login');
+});
 
 // menghapus data buku opsi kedua
 app.delete('/hapus', (req, res) => {
