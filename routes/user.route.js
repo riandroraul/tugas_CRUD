@@ -7,22 +7,17 @@ const { body, validationResult } = require('express-validator')
 const User = require('../model/users')
 
 
-userRoutes.use(session({
-  secret:'flashblog',
-  saveUninitialized: true,
-  resave: true
-}));
-
 userRoutes.use(flash())
+
 userRoutes.get('/register', userRegister)
 
 userRoutes.post('/tambahUser', [ 
-    body('email').custom(async (value) => {
+    body('email').custom(async (value, {req}) => {
     const cekUser = await User.findOne({ email: value })
-    if (!cekUser) { // jika ada user 
-        throw new Error('email salah')
+    if (cekUser) { // jika ada user 
+      throw new Error('email sudah digunakan')
     }
-    return true;
+      return true
   }),
 ], addUser )
 userRoutes.get('/login', login)

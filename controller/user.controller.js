@@ -1,35 +1,34 @@
 const User = require('../model/users')
-const flash = require('connect-flash')
+const {validationResult} = require('express-validator')
 
 const userRegister = (req, res) => {
     res.status(200)
     res.render('register', { title: 'Halaman Register', layout: 'register', })
 }
 
-const addUser = async (req, res) => {
-    const newUser = await {
+const addUser = (req, res) => {
+    const newUser = {
         nama: req.body.nama,
         email: req.body.email,
         password: req.body.password,
         role: 3
     }
-    const emailDuplikat = await User.findOne({email: newUser.email})
-    if (emailDuplikat) {
-        res.render('register', {
+
+    const errors = validationResult(req)
+    if (!errors.isEmpty()) { // jika ada error request
+        // return res.status(400).json({errors: errors.array()})
+        res.status(400).render('register', {
             title: 'Halaman Register',
             layout: 'register',
-            msg: req.flash('email sudah digunakan')
-            // userLogin
+            errors: errors.array()
         });
-        console.log
-        return;
+    } else{
+        User.insertMany(newUser, () => {
+            res.render('login', {errors: [{msg: 'Berhasil! Silahkan Login'}], title: 'Halaman Login', layout: 'login'})
+            // req.flash('msg', 'Berhasil! silahkan login')
+            res.status(200)
+        })
     }
-    
-    User.insertMany(newUser, () => {
-        req.flash('msg', 'Berhasil! silahkan login')
-        res.status(200)
-        res.redirect('/login')
-    })
 }
 
 const login = async (req, res) => {

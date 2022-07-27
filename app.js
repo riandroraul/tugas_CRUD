@@ -13,6 +13,7 @@ const Book = require('./model/books');
 const User = require('./model/users');
 const userRoutes = require('./routes/user.route');
 const req = require('express/lib/request');
+const user = require('./model/users');
 
 const app = express();
 const port = 3000;
@@ -70,9 +71,9 @@ app.post('/loginUser', [
             }
             return true;
         }),
-        body('password').custom(async(valuePassword) => {
-            const cekPassword = await User.findOne({ password: valuePassword})
-            if (!cekPassword) { // jika password benar
+        body('password').custom(async(valuePassword, {req}) => {
+            const cekEmailNPassword = await User.findOne({$and: [{email: {$eq: req.body.email}}, {password: {$eq: req.body.password}}]})
+            if (!cekEmailNPassword) { // jika email dan password tidak cocok
                 throw new Error('Password Salah!')
             }
             return true;
@@ -147,7 +148,7 @@ app.get('/ubah/:namaBuku', async(req, res) => {
             res.redirect('/books')
         }else{
             res.status(200)
-            res.render('ubah', { title: 'Ubah Data Buku', layout: 'layouts/main-layout', book })
+            res.render('ubah', { title: 'Ubah Data Buku', layout: 'layouts/main-layout', book, userLogin })
         }
     }
 })
@@ -165,6 +166,7 @@ app.put('/ubah', [
     ],
     (req, res) => {
         // console.log(req.body)
+        const userLogin = User.find({email: req.session.email})
         const errors = validationResult(req)
         if (!errors.isEmpty()) { // jika ada eror
             // return res.status(400).json({errors: errors.array()})
@@ -183,6 +185,7 @@ app.put('/ubah', [
                     pengarang: req.body.pengarang
                 }
             }).then((result) => {
+                res.render('books',{userLogin})
                 req.flash('msg', 'Data Buku Berhasil Diubah')
                 res.redirect('/books')
             });
@@ -242,21 +245,30 @@ app.get('/about', async (req, res) => {
     }
 })
 
+// menghapus data buku opsi kedua
+app.delete('/hapus', async (req, res) => { //hapus?_method=DELETE
+    const userLogin = await User.find({email: req.session.email})
+    const books = await Book.find()
+    if(userLogin[0].role === 3){
+        res.redirect('/books')
+    } else{
+    
+        Book.deleteOne({ namaBuku: req.body.namaBuku }).then((result) => {
+        req.flash('msg', 'Data Buku Berhasil Dihapus')
+        res.status(200)
+        res.redirect('/books')
+    });
+        res.status(200)
+        res.render('books', {title: 'Halaman Buku', layout: 'layouts/main-layout', msg: 'Data Buku Berhasil Dihapus', userLogin, books})
+    }
+});
+
 app.get('/logout',(req,res) => {
     req.session.destroy();
     res.redirect('/login');
 });
 
-// menghapus data buku opsi kedua
-app.delete('/hapus', (req, res) => {
-    // res.send(req.body)
-    Book.deleteOne({ namaBuku: req.body.namaBuku }).then((result) => {
-        req.flash('msg', 'Data Buku Berhasil Dihapus')
-        res.status(200)
-        res.redirect('/books')
-    });
-});
-
+ app.use(userRoutes)
 app.use('/', (req, res) => { // untuk menangkap url yang tidak ada
     const userLogin = User.find({email: req.session.email})
     if(req.session.email === undefined){

@@ -16,7 +16,7 @@
             <%= title %>
         </h1>
         <% if (typeof errors != 'undefined') { %>
-            <div class="alert alert-danger col-md-6" role="alert">
+            <div class="alert alert-<%= errors[0].msg.includes('Berhasil') === true ? 'success' : 'danger'%> col-md-6" role="alert">
                 <ul>
                     <% errors.forEach(error => { %>
                         <li>
