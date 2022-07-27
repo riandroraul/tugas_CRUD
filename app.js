@@ -12,8 +12,6 @@ require('./database')
 const Book = require('./model/books');
 const User = require('./model/users');
 const userRoutes = require('./routes/user.route');
-const req = require('express/lib/request');
-const user = require('./model/users');
 
 const app = express();
 const port = 3000;
@@ -268,7 +266,6 @@ app.get('/logout',(req,res) => {
     res.redirect('/login');
 });
 
- app.use(userRoutes)
 app.use('/', (req, res) => { // untuk menangkap url yang tidak ada
     const userLogin = User.find({email: req.session.email})
     if(req.session.email === undefined){
