@@ -1,18 +1,25 @@
 const User = require('../model/users')
 const {validationResult} = require('express-validator')
+const { hashPassword, comparePassword } = require('../validasi/hashingPassword')
+
 
 const userRegister = (req, res) => {
     res.status(200)
     res.render('register', { title: 'Halaman Register', layout: 'register', })
 }
 
-const addUser = (req, res) => {
+
+const addUser = async (req, res) => {
     const newUser = {
         nama: req.body.nama,
         email: req.body.email,
-        password: req.body.password,
+        password: await hashPassword(req.body.password),
         role: 3
     }
+    
+    // const hashPassword = await hashPassword(req.body.password)
+    // console.log( await comparePassword(req.body.password, hashPassword))
+    
 
     const errors = validationResult(req)
     if (!errors.isEmpty()) { // jika ada error request

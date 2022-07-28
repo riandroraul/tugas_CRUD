@@ -4,7 +4,7 @@ const { body, validationResult } = require('express-validator')
 const session = require('express-session')
 const cookieParser = require('cookie-parser')
 const flash = require('connect-flash')
-
+const bcrypt = require('bcrypt')
 
 const methodOverride = require('method-override')
 
@@ -64,14 +64,25 @@ app.get('/loginUser', (req, res) => {
 app.post('/loginUser', [
         body('email').custom(async (valueEmail) => { 
             const cekUser = await User.findOne({ email: valueEmail })
-            if (!cekUser) { // jika ada user 
+            if(valueEmail === ''){
+                throw new Error('email harus diisi')
+            }
+            else if (!cekUser) { // jika ada user 
                 throw new Error('email salah')
             }
             return true;
         }),
         body('password').custom(async(valuePassword, {req}) => {
-            const cekEmailNPassword = await User.findOne({$and: [{email: {$eq: req.body.email}}, {password: {$eq: req.body.password}}]})
-            if (!cekEmailNPassword) { // jika email dan password tidak cocok
+            // console.log(cekPassword);
+            const user = await User.findOne({email: req.body.email})
+            const matchPass = await bcrypt.compare(valuePassword, user.password)
+            // cocokan pasword dari ui dengan yg telah di hash di db
+            const cekEmailNPassword = await User.findOne({$and: [{email: {$eq: req.body.email}}, {password: {$eq: valuePassword}}]})
+            console.log(matchPass)
+            if (valuePassword === ''){
+                throw new Error('Password harus diisi')
+            }
+            if (!cekEmailNPassword || !matchPass) { // jika email dan password tidak cocok
                 throw new Error('Password Salah!')
             }
             return true;
@@ -166,6 +177,7 @@ app.put('/ubah', [
         // console.log(req.body)
         const userLogin = User.find({email: req.session.email})
         const errors = validationResult(req)
+
         if (!errors.isEmpty()) { // jika ada eror
             // return res.status(400).json({errors: errors.array()})
             res.render('ubah', {
@@ -183,7 +195,7 @@ app.put('/ubah', [
                     pengarang: req.body.pengarang
                 }
             }).then((result) => {
-                res.render('books',{userLogin})
+                // res.render('books',{userLogin})
                 req.flash('msg', 'Data Buku Berhasil Diubah')
                 res.redirect('/books')
             });
@@ -215,13 +227,15 @@ app.post('/tambah', [
         }),
     ],
     (req, res) => {
+        const userLogin = User.find({email: req.session.email})
         const errors = validationResult(req)
         if (!errors.isEmpty()) { // jika ada error request
             // return res.status(400).json({errors: errors.array()})
             res.render('tambah', {
                 title: 'Tambah Data Buku',
                 layout: 'layouts/main-layout',
-                errors: errors.array()
+                errors: errors.array(),
+                userLogin
             });
         } else {
             // console.log(req.body)
@@ -229,7 +243,7 @@ app.post('/tambah', [
                 // kirimkan flash message
                 req.flash('msg', 'Data Buku Berhasil Ditambahkan')
                 res.status(200)
-                res.redirect('/books')
+                res.redirect('/books', {userLogin})
             });
         }
     })
@@ -256,8 +270,8 @@ app.delete('/hapus', async (req, res) => { //hapus?_method=DELETE
         res.status(200)
         res.redirect('/books')
     });
-        res.status(200)
-        res.render('books', {title: 'Halaman Buku', layout: 'layouts/main-layout', msg: 'Data Buku Berhasil Dihapus', userLogin, books})
+        // res.status(200)
+        // res.render('books', {title: 'Halaman Buku', layout: 'layouts/main-layout', msg: 'Data Buku Berhasil Dihapus', userLogin, books})
     }
 });
 
@@ -266,13 +280,15 @@ app.get('/logout',(req,res) => {
     res.redirect('/login');
 });
 
-app.use('/', (req, res) => { // untuk menangkap url yang tidak ada
+app.get('/', (req, res) => { // untuk menangkap url yang tidak ada
     const userLogin = User.find({email: req.session.email})
     if(req.session.email === undefined){
         res.redirect('/login')
     }else{
+        
         res.status(404)
         res.render('page_error', { title: 'Halaman Tidak Ditemukan', layout: 'layouts/main-layout', userLogin })
+        res.redirect('/page_error')
     }
 })
 

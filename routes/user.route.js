@@ -4,7 +4,7 @@ const userRoutes = express.Router();
 const flash = require('connect-flash')
 const session = require('express-session')
 const { body, validationResult } = require('express-validator')
-const User = require('../model/users')
+const User = require('../model/users');
 
 
 userRoutes.use(flash())
@@ -21,5 +21,6 @@ userRoutes.post('/tambahUser', [
   }),
 ], addUser )
 userRoutes.get('/login', login)
+
 
 module.exports = userRoutes

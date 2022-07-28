@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 
 // membuat schema
 
-const user = mongoose.model('user', {
+const User = mongoose.model('User', {
   nama: {
       type: String,
       required: true
@@ -21,4 +21,4 @@ const user = mongoose.model('user', {
   }
 });
 
-module.exports = user;
+module.exports = User;
