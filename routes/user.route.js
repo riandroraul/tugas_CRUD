@@ -11,7 +11,7 @@ userRoutes.use(flash())
 
 userRoutes.get('/register', userRegister)
 
-userRoutes.post('/tambahUser', [ 
+userRoutes.post('/tambahUser', [
     body('email').custom(async (value, {req}) => {
     const cekUser = await User.findOne({ email: value })
     if (cekUser) { // jika ada user 

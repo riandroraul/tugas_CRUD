@@ -27,8 +27,12 @@ const compareResult = async () => {
     return result
 }
 
-let hasil = compareResult().then( result => result)
+// let hasil = compareResult().then( result => console.log(result))
+let plaintText = '123456'
+const hash = bcrypt.hashSync(plaintText, 10)
 
-// console.log(hasil);
+// bcrypt.compare(plaintText, hash).then((result) => console.log(result))
+
+// console.log(compare);
 
 module.exports = { hashPassword, comparePassword }
