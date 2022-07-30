@@ -1,5 +1,5 @@
 const User = require('../model/users')
-const {validationResult} = require('express-validator')
+const { validationResult } = require('express-validator')
 const { hashPassword, comparePassword } = require('../validasi/hashingPassword')
 
 
@@ -9,17 +9,17 @@ const userRegister = (req, res) => {
 }
 
 
-const addUser = async (req, res) => {
+const addUser = async(req, res) => {
     const newUser = {
         nama: req.body.nama,
         email: req.body.email,
         password: await hashPassword(req.body.password),
         role: 3
     }
-    
+
     // const hashPassword = await hashPassword(req.body.password)
     // console.log( await comparePassword(req.body.password, hashPassword))
-    
+
 
     const errors = validationResult(req)
     if (!errors.isEmpty()) { // jika ada error request
@@ -29,16 +29,16 @@ const addUser = async (req, res) => {
             layout: 'register',
             errors: errors.array()
         });
-    } else{
+    } else {
         User.insertMany(newUser, () => {
-            res.render('login', {errors: [{msg: 'Berhasil! Silahkan Login'}], title: 'Halaman Login', layout: 'login'})
-            // req.flash('msg', 'Berhasil! silahkan login')
+            res.render('login', { errors: [{ msg: 'Berhasil! Silahkan Login' }], title: 'Halaman Login', layout: 'login' })
+                // req.flash('msg', 'Berhasil! silahkan login')
             res.status(200)
         })
     }
 }
 
-const login = async (req, res) => {
+const login = async(req, res) => {
     const users = await User.find()
     res.status(200)
     res.render('login', { title: 'Halaman Login', layout: 'login', users })
