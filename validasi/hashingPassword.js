@@ -1,7 +1,4 @@
-const User = require('../model/users')
 const bcrypt = require('bcrypt');
-const res = require('express/lib/response');
-
 
 const hashPassword = async (plainText) => {
     const hash = await bcrypt.hash(plainText, 10);
@@ -12,27 +9,5 @@ const comparePassword = async (plainText, hash) => {
     const result = await bcrypt.compare(plainText, hash)
     return result
 }
-
-const text = '123'
-const cek = async () => {
-    const users = await User.find({email: 'coba@gmail.com'})
-    const cekpass = comparePassword(text, users.password)
-
-    console.log( cekpass)
-}
-
-const compareResult = async () => {
-    const result = await comparePassword(text, '$2b$10$NS1.st3dukkcz9QBhBSNoe73IrY1D1eSqmpv1/Y82w9q/J6mwjIOm')
-
-    return result
-}
-
-// let hasil = compareResult().then( result => console.log(result))
-let plaintText = '123456'
-const hash = bcrypt.hashSync(plaintText, 10)
-
-// bcrypt.compare(plaintText, hash).then((result) => console.log(result))
-
-// console.log(compare);
 
 module.exports = { hashPassword, comparePassword }
