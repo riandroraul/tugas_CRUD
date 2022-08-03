@@ -11,7 +11,7 @@ const userRegister = (req, res) => {
 }
 
 
-const addUser = async(req, res) => {
+const addUser = async (req, res) => {
     const newUser = {
         nama: req.body.nama,
         email: req.body.email,
@@ -36,9 +36,9 @@ const addUser = async(req, res) => {
     }
 }
 
-const cekUSerLogin = async (req, res) => {
+const cekUserLogin = async (req, res) => {
     const errors = validationResult(req)
-    // const userLogin = await User.findOne({email: req.body.email})
+    console.log(cekUser);
     if (!errors.isEmpty()) { // jika error request tidak kosong
         // return res.status(400).json({errors: errors.array()})
         res.render('login', {
@@ -48,23 +48,17 @@ const cekUSerLogin = async (req, res) => {
         });
     } else {
         const books = await Book.find()
-        // req.flash('msg', 'Login Berhasil')
         const session = req.session
-        // console.log(session);
         session.email = req.body.email
-        // console.log(session.email);
         
         const userLogin = await User.find({email: req.session.email})
-        console.log(userLogin)
-
+        // console.log(userLogin);
         res.status(200)
-        // res.redirect('/books')
         if(req.session.email === undefined){
-            res.redirect('/login')
+            res.redirect('/login') // alihkan ke halaman login
         }else{
             res.render('books', {books, userLogin, title: 'Halaman Buku', layout: 'layouts/main-layout', msg: 'Login Berhasil',})
         }
-            // });
     }
 }
 
@@ -96,4 +90,4 @@ const listUsers = async (req, res) => {
 }
 
 
-module.exports = { userRegister, addUser, login, listUsers, loginUser, cekUSerLogin}
+module.exports = { userRegister, addUser, login, listUsers, loginUser, cekUserLogin}

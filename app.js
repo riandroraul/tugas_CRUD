@@ -34,10 +34,14 @@ app.use(
         cookie: { maxAge: oneDay},
         // key: session,
         secret: 'secret',
-        resave: false,
+        resave: true,
         saveUninitialized: true,
     })
 )
+
+// After declare above is done, all the requests to the app routes are now using sessions.
+// The session is attached to the request, so you can access it using req.session
+// as default session data stored in application memory
 
 app.use(flash())
 
@@ -58,7 +62,6 @@ app.get('/books', async(req, res) => {
     // const session = req.session
     const books = await Book.find()
     const userLogin = await User.find({email: req.session.email})
-    // console.log(userLogin)
     if(req.session.email === undefined){
         res.redirect('/login')
     }else{

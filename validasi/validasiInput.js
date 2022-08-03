@@ -18,7 +18,6 @@ const bookValidate = [
     .withMessage('penerbit field must content letter or number')
     // .matches('[A-Z]').withMessage('penerbit field must content letter or number')
     // .matches('[0-9]').withMessage('penerbit field must content letter or number')
-
 ];
 
 module.exports = {bookValidate}
