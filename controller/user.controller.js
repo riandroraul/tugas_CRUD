@@ -38,7 +38,7 @@ const addUser = async (req, res) => {
 
 const cekUserLogin = async (req, res) => {
     const errors = validationResult(req)
-    console.log(cekUser);
+    // console.log(cekUser);
     if (!errors.isEmpty()) { // jika error request tidak kosong
         // return res.status(400).json({errors: errors.array()})
         res.render('login', {
@@ -49,9 +49,9 @@ const cekUserLogin = async (req, res) => {
     } else {
         const books = await Book.find()
         const session = req.session
-        session.email = req.body.email
+        session = cekUser;
         
-        const userLogin = await User.find({email: req.session.email})
+        // const userLogin = await User.find({email: req.session.email})
         // console.log(userLogin);
         res.status(200)
         if(req.session.email === undefined){
