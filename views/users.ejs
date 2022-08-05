@@ -26,7 +26,7 @@
 
           <form action="/hapusUser?_method=DELETE" method="post" class="d-inline">
               <input type="hidden" name="nama">
-              <button type="submit" class="badge text-bg-danger" onclick="return confirm(`User akan dihapus ?`);">hapus</button>
+              <button type="submit" class="badge text-bg-danger" value="<%= user.nama %>" onclick="return confirm(`User <%= user.nama %> akan dihapus ?`);">hapus</button>
           </form>
       </td>
       </tr>

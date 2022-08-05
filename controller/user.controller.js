@@ -1,8 +1,7 @@
 const User = require('../model/users')
 const Book = require('../model/books')
-
 const { validationResult } = require('express-validator')
-const { hashPassword, comparePassword } = require('../validasi/hashingPassword')
+const { hashPassword } = require('../validasi/hashingPassword')
 
 
 const userRegister = (req, res) => {
@@ -49,12 +48,10 @@ const cekUserLogin = async (req, res) => {
     } else {
         const books = await Book.find()
         const session = req.session
-        session = cekUser;
-        
-        // const userLogin = await User.find({email: req.session.email})
-        // console.log(userLogin);
+        session.user = cekUser
+        const userLogin = req.session.user
         res.status(200)
-        if(req.session.email === undefined){
+        if(req.session.user === undefined){
             res.redirect('/login') // alihkan ke halaman login
         }else{
             res.render('books', {books, userLogin, title: 'Halaman Buku', layout: 'layouts/main-layout', msg: 'Login Berhasil',})
@@ -69,7 +66,7 @@ const login = async(req, res) => {
 }
 
 const loginUser = (req, res) => {
-    if(req.session.email === undefined){
+    if(req.session.user === undefined){
         res.redirect('/login')
     }else{
         res.redirect('/')
@@ -77,11 +74,11 @@ const loginUser = (req, res) => {
 }
 
 const listUsers = async (req, res) => {
-    const userLogin = await User.find({email: req.session.email})
+    const userLogin = req.session.user
     const users = await User.find()
     if(userLogin[0].role !== 1){
         res.redirect('/')
-    } else if(req.session.email === undefined){
+    } else if(req.session.user === undefined){
             res.redirect('/login')
     } else{
         res.status(200)
@@ -89,5 +86,20 @@ const listUsers = async (req, res) => {
     }
 }
 
+const hapusUser = () => {
+    async (req, res) => { //hapus?_method=DELETE
+        const userLogin = req.session.user
+        if(userLogin[0].role === 3 || userLogin[0].role === 2){
+            res.redirect('/')
+        } else{
+            User.deleteOne({ nama: req.body.nama }).then((result) => {
+                req.flash('msg', 'Data User Berhasil Dihapus')
+                res.status(200)
+                res.redirect('/users')
+            });
+        }
+    }
+}
 
-module.exports = { userRegister, addUser, login, listUsers, loginUser, cekUserLogin}
+
+module.exports = { userRegister, addUser, login, listUsers, loginUser, cekUserLogin, hapusUser}

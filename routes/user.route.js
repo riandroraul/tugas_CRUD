@@ -1,5 +1,5 @@
 const userRoutes = require('express').Router();
-const { userRegister, addUser, login, listUsers, loginUser, cekUserLogin } = require('../controller/user.controller');
+const { userRegister, addUser, login, listUsers, loginUser, cekUserLogin, hapusUser } = require('../controller/user.controller');
 const flash = require('connect-flash')
 const { body, validationResult } = require('express-validator')
 const User = require('../model/users');
@@ -23,18 +23,18 @@ userRoutes.post('/tambahUser', [
 userRoutes.post('/loginUser', [
   body('email').custom(async (valueEmail, {req}) => {
       // const cekUser = await User.findOne({ email: valueEmail })
-      global.cekUser = await User.findOne({ email: valueEmail })
+      global.cekUser = await User.find({ email: valueEmail })
       if(valueEmail === ''){
         throw new Error('email dan password harus diisi')
       }
-      else if (!cekUser) { // jika tidak ada user 
+      else if (!cekUser[0]) { // jika tidak ada user 
         throw new Error('email dan password salah')
       }
       return true;
   }),
-  body('password').custom( async(valuePassword, {req}) => {
-      if (cekUser) { // jika email dan password tidak cocok
-          const matchPass = await comparePassword(valuePassword, cekUser.password)
+  body('password').custom( async(valuePassword, {req} ) => {
+      if (cekUser[0]) { // jika email dan password tidak cocok
+          const matchPass = await comparePassword(valuePassword, cekUser[0].password)
           if(!matchPass){
             throw new Error('email dan password Salah!')
           }
@@ -45,6 +45,7 @@ userRoutes.post('/loginUser', [
 userRoutes.get('/login', login)
 userRoutes.get('/users', listUsers)
 userRoutes.get('/loginUser', loginUser)
+userRoutes.delete('/hapusUser', hapusUser);
 
 
 module.exports = userRoutes

@@ -31,7 +31,7 @@ const oneDay = 1000 * 60 * 60 * 24;
 app.use(cookieParser('secret'));
 app.use(
     session({
-        cookie: { maxAge: oneDay},
+        cookie: { maxAge: oneDay },
         // key: session,
         secret: 'secret',
         resave: true,
@@ -48,8 +48,8 @@ app.use(flash())
 app.use(userRoutes)
 
 app.get('/', async (req, res) => {
-    const userLogin = await User.find({email: req.session.email})
-    if(req.session.email === undefined){
+    const userLogin = await req.session.user
+    if(req.session.user == undefined){
         res.redirect('login')
     }else{
         res.status(200)
@@ -57,12 +57,10 @@ app.get('/', async (req, res) => {
     }
 })
 
-
 app.get('/books', async(req, res) => {
-    // const session = req.session
     const books = await Book.find()
-    const userLogin = await User.find({email: req.session.email})
-    if(req.session.email === undefined){
+    const userLogin = req.session.user
+    if(req.session.user === undefined){
         res.redirect('/login')
     }else{
         res.status(200)
@@ -70,12 +68,10 @@ app.get('/books', async(req, res) => {
     }
 })
 
-
-// mengubah data buku
 app.get('/ubah/:namaBuku', async(req, res) => {
     const book = await Book.findOne({ namaBuku: req.params.namaBuku })
-    const userLogin = await User.find({email: req.session.email})
-    if(req.session.email === undefined){
+    const userLogin = req.session.user
+    if(req.session.user === undefined){
         res.redirect('/login')
     }else{
         if(userLogin[0].role === 3){
@@ -101,9 +97,8 @@ app.put('/ubah', [
     ],
     async(req, res) => {
         // console.log(req.body)
-        const userLogin = await User.find({email: req.session.email})
+        const userLogin = req.session.user
         const errors = validationResult(req)
-        console.log(userLogin);
         if (!errors.isEmpty()) { // jika ada eror
             // return res.status(400).json({errors: errors.array()})
             res.render('ubah', {
@@ -130,8 +125,8 @@ app.put('/ubah', [
     })
 
 app.get('/tambah', async (req, res) => {
-    const userLogin = await User.find({email: req.session.email})
-    if (req.session.email === undefined){
+    const userLogin = req.session.user
+    if (req.session.user === undefined){
         res.redirect('/login')
     } else {
         if(userLogin[0].role === 3){
@@ -155,10 +150,8 @@ app.post('/tambah', [
         bookValidate
     ],
     async (req, res) => {
-        const userLogin = await User.find({email: req.session.email})
+        const userLogin = req.session.user
         const errors = validationResult(req)
-        // console.log(req.session.email);
-        // console.log(228, userLogin, errors, req.flash("msg"))
         if (!errors.isEmpty()) { // jika ada error request
             // return res.status(400).json({errors: errors.array()})
             res.render('tambah', {
@@ -180,8 +173,8 @@ app.post('/tambah', [
     })
 
 app.get('/about', async (req, res) => {
-    const userLogin = await User.find({email: req.session.email})
-    if(req.session.email === undefined){
+    const userLogin = req.session.user
+    if(req.session.user === undefined){
         res.redirect('/login')
     }else{
         res.render('about', { title: 'Halaman About', layout: 'layouts/main-layout', userLogin })
@@ -190,7 +183,7 @@ app.get('/about', async (req, res) => {
 
 // menghapus data buku opsi kedua
 app.delete('/hapus', async (req, res) => { //hapus?_method=DELETE
-    const userLogin = await User.find({email: req.session.email})
+    const userLogin = req.session.user
     if(userLogin[0].role === 3){
         res.redirect('/books')
     } else{
@@ -212,9 +205,9 @@ app.get('/logout',(req,res) => {
 });
 
 app.use('/', async (req, res) => { // untuk menangkap url yang tidak ada
-    const userLogin = await User.find({email: req.session.email})
+    const userLogin = req.session.user
     // console.log(userLogin)
-    if(req.session.email === undefined){
+    if(req.session.user === undefined){
         res.redirect('/login')
     }else{
         res.status(404)
