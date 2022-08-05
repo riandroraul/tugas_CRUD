@@ -1,0 +1,33 @@
+<% if (typeof errors != 'undefined') { %>
+  <div class="alert alert-danger col-md-6" role="alert">
+      <ul>
+          <% errors.forEach(error => { %>
+              <li> <%= error.msg %> </li>                
+              <% }) %>
+          <%= errors.msg %>
+      </ul>
+  </div>
+<% } %>
+
+<form action="/ubahRoleUser?_method=PUT" method="post">
+  <div class="mb-3 col-md-6">
+      <label for="nama" class="form-label">Nama </label>
+      <input type="hidden" name="_id" id="id" value="<%= user._id %> ">
+      <input type="text" class="form-control" value="<%= user.nama %>" name="nama" id="nama" readonly>
+  </div>
+  <div class="mb-3 col-md-6">
+      <label for="email" class="form-label">Email</label>
+      <input type="email" class="form-control" value="<%= user.email %>" name="email" id="email" readonly>
+  </div>
+  <div class="mb-3 col-md-6">
+    <select class="form-select" name="role">
+      <option selected><%= user.role %></option>
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+    </select>
+  </div>
+  <div class="mb-3 col-md-6">
+      <button type="submit" class="btn btn-primary">Ubah</button>
+  </div>
+</form>
