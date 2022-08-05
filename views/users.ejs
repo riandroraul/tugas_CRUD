@@ -22,11 +22,11 @@
         <td><%= user.email %></td>
         <td><%= user.role %></td>
         <td>
-          <a href="/ubahUser"><span class="badge text-bg-success">ubah</span></a>
+          <a href="/ubahUser/<%= user._id %>"><span class="badge text-bg-success">ubah</span></a>
 
           <form action="/hapusUser?_method=DELETE" method="post" class="d-inline">
-              <input type="hidden" name="nama">
-              <button type="submit" class="badge text-bg-danger" value="<%= user.nama %>" onclick="return confirm(`User <%= user.nama %> akan dihapus ?`);">hapus</button>
+              <input type="hidden" name="nama" value="<%= user.nama %>">
+              <button type="submit" class="badge text-bg-danger" onclick="return confirm(`User <%= user.nama %> akan dihapus ?`);">hapus</button>
           </form>
       </td>
       </tr>

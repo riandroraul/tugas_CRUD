@@ -37,7 +37,7 @@
                                     <%= book.pengarang %>
                                 </td>
 
-                                <% if (userLogin[0].role == 1 || userLogin[0].role == 2) { %>
+                                <% if (userLogin[0].role == 1) { %>
                                     <td>
                                         <a href="/ubah/<%= book.namaBuku %>"><span class="badge text-bg-success">ubah</span></a>
 
