@@ -9,7 +9,6 @@ const methodOverride = require("method-override");
 
 require("./database");
 const Book = require("./model/books");
-const User = require("./model/users");
 const userRoutes = require("./routes/user.route");
 const { bookValidate } = require("./validasi/validasiInput");
 
