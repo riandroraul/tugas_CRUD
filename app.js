@@ -48,7 +48,7 @@ app.use(userRoutes);
 
 app.get("/", (req, res) => {
   const userLogin = req.session.user;
-  if (req.session.user == undefined) {
+  if (userLogin == undefined) {
     res.redirect("login");
   } else {
     res.status(200);
@@ -77,10 +77,15 @@ app.get("/books", async (req, res) => {
   }
 });
 
+app.use("/ubah/:namaBuku", async (req, res, next) => {
+  req.book = await Book.findOne({ namaBuku: req.params.namaBuku });
+  next();
+});
+
 app.get("/ubah/:namaBuku", async (req, res) => {
-  const book = await Book.findOne({ namaBuku: req.params.namaBuku });
+  const book = req.book;
   const userLogin = req.session.user;
-  if (req.session.user === undefined) {
+  if (userLogin === undefined) {
     res.redirect("/login");
   } else {
     if (userLogin[0].role === 3) {
@@ -136,9 +141,6 @@ app.put(
           },
         }
       ).then((result) => {
-        {
-          userLogin;
-        }
         req.flash("msg", "Data Buku Berhasil Diubah");
         res.redirect("/books");
       });
@@ -242,7 +244,6 @@ app.get("/logout", (req, res) => {
 app.use("/", async (req, res) => {
   // untuk menangkap url yang tidak ada
   const userLogin = req.session.user;
-  // console.log(userLogin)
   if (req.session.user === undefined) {
     res.redirect("/login");
   } else {
@@ -252,7 +253,6 @@ app.use("/", async (req, res) => {
       layout: "layouts/main-layout",
       userLogin,
     });
-    // res.redirect('/page_error')
   }
 });
 

@@ -11,8 +11,6 @@ const userRegister = (req, res) => {
 const addUser = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    // jika ada error request
-    // return res.status(400).json({errors: errors.array()})
     res.status(400).render("register", {
       title: "Halaman Register",
       layout: "register",
@@ -31,7 +29,6 @@ const addUser = async (req, res) => {
         title: "Halaman Login",
         layout: "login",
       });
-      // req.flash('msg', 'Berhasil! silahkan login')
       res.status(200);
     });
   }
@@ -51,10 +48,11 @@ const cekUserLogin = async (req, res) => {
   } else {
     const books = await Book.find();
     const session = req.session;
-    session.user = cekUser;
-    const userLogin = req.session.user;
+    session.user = req.cekUser;
+    const userLogin = session.user;
+    console.log(userLogin);
     res.status(200);
-    if (req.session.user === undefined) {
+    if (userLogin === undefined) {
       res.redirect("/login"); // alihkan ke halaman login
     } else {
       res.render("books", {
@@ -102,7 +100,7 @@ const listUsers = async (req, res) => {
 
 const hapusUser = (req, res) => {
   const userLogin = req.session.user;
-  if (userLogin[0].role === 3 || userLogin[0].role === 2) {
+  if (userLogin[0].role !== 1) {
     res.redirect("/");
   } else {
     User.deleteOne({ nama: req.body.nama }).then((result) => {
@@ -137,7 +135,6 @@ const ubahRoleUser = async (req, res) => {
   } else if (userLogin[0].role !== 1) {
     return res.redirect("/");
   }
-  console.log(req.body);
   User.updateOne(
     { _id: req.body.id },
     {

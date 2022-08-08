@@ -19,18 +19,20 @@ userRoutes.use(flash());
 
 userRoutes.get("/register", userRegister);
 
+userRoutes.use(async (req, res, next) => {
+  req.cekUser = await User.find({ email: req.body.email });
+  next();
+});
+
 userRoutes.post(
   "/tambahUser",
-  [
-    body("email").custom(async (value, { req }) => {
-      const cekUser = await User.findOne({ email: value });
-      if (cekUser) {
-        // jika ada user
-        throw new Error("email sudah digunakan");
-      }
-      return true;
-    }),
-  ],
+  body("email").custom(async (value, { req }) => {
+    if (req.cekUser) {
+      // jika ada user
+      throw new Error("email sudah digunakan");
+    }
+    return true;
+  }),
   addUser
 );
 
@@ -38,22 +40,20 @@ userRoutes.post(
   "/loginUser",
   [
     body("email").custom(async (valueEmail, { req }) => {
-      // const cekUser = await User.findOne({ email: valueEmail })
-      global.cekUser = await User.find({ email: valueEmail });
-      if (valueEmail === "") {
+      if (valueEmail === "" || req.body.password === "") {
         throw new Error("email dan password harus diisi");
-      } else if (!cekUser[0]) {
+      } else if (!req.cekUser[0]) {
         // jika tidak ada user
         throw new Error("email dan password salah");
       }
       return true;
     }),
     body("password").custom(async (valuePassword, { req }) => {
-      if (cekUser[0]) {
+      if (req.cekUser[0]) {
         // jika email dan password tidak cocok
         const matchPass = await comparePassword(
           valuePassword,
-          cekUser[0].password
+          req.cekUser[0].password
         );
         if (!matchPass) {
           throw new Error("email dan password Salah!");
