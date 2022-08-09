@@ -1,8 +1,6 @@
 const express = require("express");
 const expressLayout = require("express-ejs-layouts");
 const { body, validationResult, check } = require("express-validator");
-const session = require("express-session");
-const cookieParser = require("cookie-parser");
 const flash = require("connect-flash");
 
 const methodOverride = require("method-override");
@@ -26,22 +24,6 @@ app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
 
 // konfigurasi flash
-const oneDay = 1000 * 60 * 60 * 24;
-app.use(cookieParser("secret"));
-app.use(
-  session({
-    cookie: { maxAge: oneDay },
-    // key: session,
-    secret: "secret",
-    resave: true,
-    saveUninitialized: true,
-  })
-);
-
-// After declare above is done, all the requests to the app routes are now using sessions.
-// The session is attached to the request, so you can access it using req.session
-// as default session data stored in application memory
-
 app.use(flash());
 
 app.use(userRoutes);
