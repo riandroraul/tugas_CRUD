@@ -50,7 +50,7 @@ const cekUserLogin = async (req, res) => {
     const session = req.session;
     session.user = req.cekUser;
     const userLogin = session.user;
-    console.log(userLogin);
+    // console.log(userLogin);
     res.status(200);
     if (userLogin === undefined) {
       res.redirect("/login"); // alihkan ke halaman login
