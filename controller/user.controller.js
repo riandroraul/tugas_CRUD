@@ -128,26 +128,30 @@ const ubahUser = async (req, res) => {
   });
 };
 
-const ubahRoleUser = async (req, res) => {
+const ubahRoleUser = (req, res) => {
   const userLogin = req.session.user;
   if (userLogin === undefined) {
     return res.redirect("/login");
   } else if (userLogin[0].role !== 1) {
     return res.redirect("/");
   }
+  console.log(req.body.id);
   User.updateOne(
-    { _id: req.body.id },
+    { email: req.body.email },
     {
       $set: {
         role: req.body.role,
       },
     }
-  ).then((result) => {
-    // res.render('books',{userLogin})
-    console.log(result);
-    req.flash("msg", "role user berhasil diubah");
-    res.redirect("/users");
-  });
+  )
+    .then((result) => {
+      // res.render('books',{userLogin})
+      req.flash("msg", "role user berhasil diubah");
+      res.redirect("/users");
+    })
+    .catch((err) => {
+      console.log(err.message);
+    });
 };
 
 module.exports = {

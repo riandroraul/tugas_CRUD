@@ -12,7 +12,7 @@
 <form action="/ubahRoleUser?_method=PUT" method="post">
   <div class="mb-3 col-md-6">
       <label for="nama" class="form-label">Nama </label>
-      <input type="hidden" name="_id" id="id" value="<%= user._id %> ">
+      <input type="hidden" name="id" id="id" value="<%= user._id %> ">
       <input type="text" class="form-control" value="<%= user.nama %>" name="nama" id="nama" readonly>
   </div>
   <div class="mb-3 col-md-6">

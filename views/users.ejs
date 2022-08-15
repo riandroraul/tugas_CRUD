@@ -22,7 +22,9 @@
         <td><%= user.email %></td>
         <td><%= user.role %></td>
         <td>
+          <form action="/ubahUser?_method=PUT" method="post" class="d-inline">
           <a href="/ubahUser/<%= user._id %>"><span class="badge text-bg-success">ubah</span></a>
+          </form>
 
           <form action="/hapusUser?_method=DELETE" method="post" class="d-inline">
               <input type="hidden" name="nama" value="<%= user.nama %>">

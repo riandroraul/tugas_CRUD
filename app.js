@@ -2,6 +2,7 @@ const express = require("express");
 const expressLayout = require("express-ejs-layouts");
 const { body, validationResult, check } = require("express-validator");
 const flash = require("connect-flash");
+const session = require("express-session");
 
 const methodOverride = require("method-override");
 
@@ -17,6 +18,16 @@ app.use(methodOverride("_method"));
 
 app.use(flash());
 
+const oneDay = 1000 * 60 * 60 * 24;
+app.use(
+  session({
+    secret: "keyboard cat",
+    resave: false,
+    saveUninitialized: true,
+    cookie: { maxAge: oneDay },
+  })
+);
+
 // menggunakan view engine ejs
 app.set("view engine", "ejs");
 app.use(expressLayout);
@@ -30,6 +41,7 @@ app.use(userRoutes);
 
 app.get("/", (req, res) => {
   const userLogin = req.session.user;
+  // console.log(userLogin);
   if (userLogin == undefined) {
     res.redirect("login");
   } else {
